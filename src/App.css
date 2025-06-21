@@ -45,6 +45,19 @@ header p {
   width: 100%;
   font-size: 1.5rem;
   color: #7f8c8d;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading::after {
+  content: '...';
+  animation: pulse 1.5s infinite;
+  margin-left: 5px;
 }
 
 /* Start Screen */
@@ -119,6 +132,8 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 /* Stats Bar */
@@ -267,6 +282,40 @@ header p {
   to { opacity: 1; }
 }
 
+/* Touch feedback for mobile devices */
+.touch-active {
+  transform: scale(0.97);
+  opacity: 0.9;
+  transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out;
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
 /* Progress Bar */
 .progress {
   margin-top: 10px;
@@ -291,8 +340,34 @@ header p {
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+/* Large tablets and small desktops */
+@media (max-width: 992px) {
+  #root {
+    max-width: 700px;
+  }
+  
   .rebus-game {
+    max-width: 700px;
+  }
+  
+  header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .puzzle-visual {
+    font-size: 2.8rem;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  #root {
+    max-width: 95%;
+    padding: 0.5rem;
+  }
+  
+  .rebus-game {
+    max-width: 100%;
     padding: 15px;
   }
   
@@ -301,21 +376,166 @@ header p {
   }
   
   .puzzle-visual {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
+    min-height: 100px;
+  }
+  
+  .game-rules {
+    padding: 12px;
+  }
+  
+  .game-rules h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  .rebus-game {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  header h1 {
+    font-size: 1.8rem;
+  }
+  
+  header p {
+    font-size: 1rem;
+  }
+  
+  .start-screen h2 {
+    font-size: 1.7rem;
+  }
+  
+  .puzzle-visual {
+    font-size: 2.2rem;
+    margin: 20px 0;
   }
   
   .answer-container {
     flex-direction: column;
+    gap: 8px;
+  }
+  
+  .answer-container input {
+    padding: 10px;
+  }
+  
+  .answer-container button {
+    width: 100%;
+    padding: 10px 0;
   }
   
   .stats {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    padding: 12px;
   }
   
   .stat-item {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+  }
+  
+  .hint-button {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .hint-text {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 400px) {
+  .rebus-game {
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .puzzle-visual {
+    font-size: 1.8rem;
+    margin: 15px 0;
+  }
+  
+  .game-rules ul {
+    padding-left: 15px;
+  }
+  
+  .game-rules li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+  
+  .start-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+/* Landscape orientation for mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+  #root {
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+  
+  .rebus-game {
+    max-width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    margin-bottom: 10px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+  
+  header p {
+    font-size: 0.9rem;
+  }
+  
+  .start-screen {
+    height: auto;
+    min-height: 200px;
+  }
+  
+  .game-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+  }
+  
+  .stats {
+    grid-column: 1 / -1;
+  }
+  
+  .puzzle-container {
+    margin-bottom: 10px;
+  }
+  
+  .puzzle-visual {
+    font-size: 1.8rem;
+    margin: 10px 0;
+    min-height: 80px;
+  }
+  
+  .progress {
+    grid-column: 1 / -1;
   }
 }

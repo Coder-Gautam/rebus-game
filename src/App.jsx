@@ -166,8 +166,27 @@ function App() {
     setShowHint(true);
   };
 
+  // Handle touch events for better mobile experience
+  const handleTouchStart = (e) => {
+    // Add touch feedback for interactive elements
+    if (e.target.tagName === 'BUTTON') {
+      e.target.classList.add('touch-active');
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    // Remove touch feedback
+    if (e.target.tagName === 'BUTTON') {
+      e.target.classList.remove('touch-active');
+    }
+  };
+
   return (
-    <div className="rebus-game">
+    <div 
+      className="rebus-game"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <header>
         <h1>Rebus Game</h1>
         <p>Challenge yourself with visual word puzzles!</p>
@@ -218,17 +237,24 @@ function App() {
             </div>
 
             <div className="answer-container">
+              <label htmlFor="answer-input" className="sr-only">Your answer</label>
               <input
+                id="answer-input"
                 type="text"
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="Type your answer here"
                 disabled={isCorrect}
                 className={isCorrect ? 'correct-answer' : ''}
+                aria-describedby="answer-instructions"
+                autoComplete="off"
+                onKeyPress={(e) => e.key === 'Enter' && userAnswer.trim() !== '' && !isCorrect && checkAnswer()}
               />
+              <span id="answer-instructions" className="sr-only">Type your solution to the rebus puzzle</span>
               <button 
                 onClick={checkAnswer} 
                 disabled={isCorrect || userAnswer.trim() === ''}
+                aria-label="Submit your answer"
               >
                 Submit
               </button>
