@@ -11,6 +11,7 @@ function App() {
   const [showHint, setShowHint] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [solvedPuzzles, setSolvedPuzzles] = useState([])
 
   // Sample puzzles data
   const puzzles = [
@@ -83,8 +84,12 @@ function App() {
     return () => clearInterval(interval);
   }, [gameStarted, isCorrect]);
 
-  // Load effect
+  // Load effect and randomize puzzle on page refresh
   useEffect(() => {
+    // Generate a random puzzle index when the component mounts (page loads/refreshes)
+    const randomIndex = Math.floor(Math.random() * puzzles.length);
+    setCurrentPuzzle(randomIndex);
+    
     // Simulate loading puzzle
     const timer = setTimeout(() => {
       setLoading(false);
@@ -94,10 +99,15 @@ function App() {
 
   // Start game function
   const startGame = () => {
+    // Generate a random puzzle index when starting a new game
+    const randomIndex = Math.floor(Math.random() * puzzles.length);
+    setCurrentPuzzle(randomIndex);
+    
     setGameStarted(true);
     setLoading(false);
     setTime(0);
     setAttempts(0);
+    setSolvedPuzzles([]);
     setUserAnswer('');
     setShowHint(false);
     setIsCorrect(false);
@@ -118,20 +128,50 @@ function App() {
       
       // Show success message and prepare for next puzzle
       setTimeout(() => {
-        if (currentPuzzle < puzzles.length - 1) {
-          setCurrentPuzzle(prevPuzzle => prevPuzzle + 1);
-          setUserAnswer('');
-          setTime(0);
-          setAttempts(0);
-          setShowHint(false);
-          setIsCorrect(false);
-        } else {
-          // Game completed
-          alert(`Congratulations! You've completed all puzzles with ${points} points!`);
-          // Reset game if desired
-          setCurrentPuzzle(0);
-          setGameStarted(false);
-        }
+        // Add current puzzle to solved puzzles and check if all puzzles have been solved
+        setSolvedPuzzles(prev => {
+          const newSolvedPuzzles = [...prev, puzzles[currentPuzzle].id];
+          
+          // Check if all puzzles have been solved
+          if (newSolvedPuzzles.length < puzzles.length) {
+            // Generate a random index for the next puzzle
+            // Avoid showing puzzles that have already been solved
+            let nextPuzzleIndex;
+            let attempts = 0;
+            const maxAttempts = 100; // Safety to prevent infinite loop
+            
+            do {
+              nextPuzzleIndex = Math.floor(Math.random() * puzzles.length);
+              attempts++;
+              // Break the loop if we've tried too many times (fallback)
+              if (attempts > maxAttempts) break;
+            } while (
+              nextPuzzleIndex === currentPuzzle || 
+              newSolvedPuzzles.includes(puzzles[nextPuzzleIndex].id)
+            );
+            
+            // Schedule these state updates for after the solvedPuzzles state is updated
+            setTimeout(() => {
+              setCurrentPuzzle(nextPuzzleIndex);
+              setUserAnswer('');
+              setTime(0);
+              setAttempts(0);
+              setShowHint(false);
+              setIsCorrect(false);
+            }, 0);
+          } else {
+            // Game completed - all puzzles solved
+            setTimeout(() => {
+              alert(`Congratulations! You've completed all puzzles with ${points} points!`);
+              // Reset game
+              setCurrentPuzzle(0);
+              setGameStarted(false);
+            }, 0);
+            return [];
+          }
+          
+          return newSolvedPuzzles;
+        });
       }, 2000);
     }
   };
