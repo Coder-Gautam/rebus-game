@@ -1,84 +1,83 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [currentPuzzle, setCurrentPuzzle] = useState(0)
-  const [userAnswer, setUserAnswer] = useState('')
-  const [points, setPoints] = useState(0)
-  const [time, setTime] = useState(0)
-  const [attempts, setAttempts] = useState(0)
-  const [gameStarted, setGameStarted] = useState(false)
-  const [showHint, setShowHint] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [solvedPuzzles, setSolvedPuzzles] = useState([])
+  const [currentPuzzle, setCurrentPuzzle] = useState(0);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [points, setPoints] = useState(0);
+  const [time, setTime] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [solvedPuzzles, setSolvedPuzzles] = useState([]);
 
-  // Sample puzzles data
   const puzzles = [
     {
       id: 1,
-      visual: '👁️❤️U',
-      answer: 'i love you',
-      hint: 'A common expression of affection',
-      difficulty: 1
+      visual: "👁️❤️U",
+      answer: "i love you",
+      hint: "A common expression of affection",
+      difficulty: 1,
     },
     {
       id: 2,
-      visual: 'H + 🐝',
-      answer: 'honeybee',
-      hint: 'A flying insect that makes something sweet',
-      difficulty: 1
+      visual: "H + 🐝",
+      answer: "honeybee",
+      hint: "A flying insect that makes something sweet",
+      difficulty: 1,
     },
     {
       id: 3,
-      visual: '🧠💭',
-      answer: 'brainstorm',
-      hint: 'When you think of many ideas',
-      difficulty: 2
+      visual: "🧠💭",
+      answer: "brainstorm",
+      hint: "When you think of many ideas",
+      difficulty: 2,
     },
     {
       id: 4,
-      visual: '🌊🌊🌊\n🚶',
-      answer: 'overseas travel',
-      hint: 'Going to another country across water',
-      difficulty: 2
+      visual: "🌊🌊🌊\n🚶",
+      answer: "overseas travel",
+      hint: "Going to another country across water",
+      difficulty: 2,
     },
     {
       id: 5,
-      visual: '🏠\n🏠🏠\n🏠🏠🏠',
-      answer: 'growing economy',
-      hint: 'When business and money increase in a country',
-      difficulty: 3
+      visual: "🏠\n🏠🏠\n🏠🏠🏠",
+      answer: "growing economy",
+      hint: "When business and money increase in a country",
+      difficulty: 3,
     },
     {
       id: 6,
-      visual: 'LIFE\n40',
-      answer: 'life begins at 40',
-      hint: 'A saying about getting older but still having fun',
-      difficulty: 2
+      visual: "LIFE\n40",
+      answer: "life begins at 40",
+      hint: "A saying about getting older but still having fun",
+      difficulty: 2,
     },
     {
       id: 7,
-      visual: 'STAND\nI',
-      answer: 'i understand',
-      hint: 'When you comprehend something',
-      difficulty: 2
+      visual: "STAND\nI",
+      answer: "i understand",
+      hint: "When you comprehend something",
+      difficulty: 2,
     },
     {
       id: 8,
-      visual: 'HEAD\nCOVER COVER\nCOVER COVER',
-      answer: 'head for cover',
-      hint: 'What you do when seeking protection',
-      difficulty: 3
-    }
-  ]
+      visual: "HEAD\nCOVER COVER\nCOVER COVER",
+      answer: "head for cover",
+      hint: "What you do when seeking protection",
+      difficulty: 3,
+    },
+  ];
 
   // Timer effect
   useEffect(() => {
     let interval;
     if (gameStarted && !isCorrect) {
       interval = setInterval(() => {
-        setTime(prevTime => prevTime + 1);
+        setTime((prevTime) => prevTime + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -89,7 +88,7 @@ function App() {
     // Generate a random puzzle index when the component mounts (page loads/refreshes)
     const randomIndex = Math.floor(Math.random() * puzzles.length);
     setCurrentPuzzle(randomIndex);
-    
+
     // Simulate loading puzzle
     const timer = setTimeout(() => {
       setLoading(false);
@@ -102,13 +101,13 @@ function App() {
     // Generate a random puzzle index when starting a new game
     const randomIndex = Math.floor(Math.random() * puzzles.length);
     setCurrentPuzzle(randomIndex);
-    
+
     setGameStarted(true);
     setLoading(false);
     setTime(0);
     setAttempts(0);
     setSolvedPuzzles([]);
-    setUserAnswer('');
+    setUserAnswer("");
     setShowHint(false);
     setIsCorrect(false);
   };
@@ -117,21 +116,21 @@ function App() {
   const checkAnswer = () => {
     const currentAnswer = puzzles[currentPuzzle].answer.toLowerCase().trim();
     const userInput = userAnswer.toLowerCase().trim();
-    
-    setAttempts(prevAttempts => prevAttempts + 1);
-    
+
+    setAttempts((prevAttempts) => prevAttempts + 1);
+
     if (userInput === currentAnswer) {
       // Correct answer
       const pointsEarned = calculatePoints();
-      setPoints(prevPoints => prevPoints + pointsEarned);
+      setPoints((prevPoints) => prevPoints + pointsEarned);
       setIsCorrect(true);
-      
+
       // Show success message and prepare for next puzzle
       setTimeout(() => {
         // Add current puzzle to solved puzzles and check if all puzzles have been solved
-        setSolvedPuzzles(prev => {
+        setSolvedPuzzles((prev) => {
           const newSolvedPuzzles = [...prev, puzzles[currentPuzzle].id];
-          
+
           // Check if all puzzles have been solved
           if (newSolvedPuzzles.length < puzzles.length) {
             // Generate a random index for the next puzzle
@@ -139,21 +138,21 @@ function App() {
             let nextPuzzleIndex;
             let attempts = 0;
             const maxAttempts = 100; // Safety to prevent infinite loop
-            
+
             do {
               nextPuzzleIndex = Math.floor(Math.random() * puzzles.length);
               attempts++;
               // Break the loop if we've tried too many times (fallback)
               if (attempts > maxAttempts) break;
             } while (
-              nextPuzzleIndex === currentPuzzle || 
+              nextPuzzleIndex === currentPuzzle ||
               newSolvedPuzzles.includes(puzzles[nextPuzzleIndex].id)
             );
-            
+
             // Schedule these state updates for after the solvedPuzzles state is updated
             setTimeout(() => {
               setCurrentPuzzle(nextPuzzleIndex);
-              setUserAnswer('');
+              setUserAnswer("");
               setTime(0);
               setAttempts(0);
               setShowHint(false);
@@ -162,14 +161,16 @@ function App() {
           } else {
             // Game completed - all puzzles solved
             setTimeout(() => {
-              alert(`Congratulations! You've completed all puzzles with ${points} points!`);
+              alert(
+                `Congratulations! You've completed all puzzles with ${points} points!`
+              );
               // Reset game
               setCurrentPuzzle(0);
               setGameStarted(false);
             }, 0);
             return [];
           }
-          
+
           return newSolvedPuzzles;
         });
       }, 2000);
@@ -180,17 +181,20 @@ function App() {
   const calculatePoints = () => {
     const difficulty = puzzles[currentPuzzle].difficulty;
     let basePoints = difficulty * 100;
-    
+
     // Deduct points for time (10 points per 10 seconds)
     const timeDeduction = Math.floor(time / 10) * 10;
-    
+
     // Deduct points for attempts (20 points per attempt after the first)
     const attemptDeduction = attempts > 1 ? (attempts - 1) * 20 : 0;
-    
+
     // Deduct points for hint usage
     const hintDeduction = showHint ? 50 : 0;
-    
-    const totalPoints = Math.max(basePoints - timeDeduction - attemptDeduction - hintDeduction, 10);
+
+    const totalPoints = Math.max(
+      basePoints - timeDeduction - attemptDeduction - hintDeduction,
+      10
+    );
     return totalPoints;
   };
 
@@ -198,7 +202,7 @@ function App() {
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   // Show hint function
@@ -209,20 +213,20 @@ function App() {
   // Handle touch events for better mobile experience
   const handleTouchStart = (e) => {
     // Add touch feedback for interactive elements
-    if (e.target.tagName === 'BUTTON') {
-      e.target.classList.add('touch-active');
+    if (e.target.tagName === "BUTTON") {
+      e.target.classList.add("touch-active");
     }
   };
 
   const handleTouchEnd = (e) => {
     // Remove touch feedback
-    if (e.target.tagName === 'BUTTON') {
-      e.target.classList.remove('touch-active');
+    if (e.target.tagName === "BUTTON") {
+      e.target.classList.remove("touch-active");
     }
   };
 
   return (
-    <div 
+    <div
       className="rebus-game"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -239,8 +243,14 @@ function App() {
       ) : !gameStarted ? (
         <div className="start-screen">
           <h2>Welcome to Rebus Game!</h2>
-          <p>Solve visual word puzzles by figuring out what the combination of pictures, symbols, and letters represent.</p>
-          <p>Earn points based on your speed, attempts, and whether you use hints.</p>
+          <p>
+            Solve visual word puzzles by figuring out what the combination of
+            pictures, symbols, and letters represent.
+          </p>
+          <p>
+            Earn points based on your speed, attempts, and whether you use
+            hints.
+          </p>
           <div className="game-rules">
             <h3>How to Play:</h3>
             <ul>
@@ -250,7 +260,9 @@ function App() {
               <li>Earn more points by solving quickly with fewer attempts</li>
             </ul>
           </div>
-          <button className="start-button" onClick={startGame}>Start Game</button>
+          <button className="start-button" onClick={startGame}>
+            Start Game
+          </button>
         </div>
       ) : (
         <div className="game-container">
@@ -271,13 +283,17 @@ function App() {
 
           <div className="puzzle-container">
             <div className="puzzle-visual">
-              {puzzles[currentPuzzle].visual.split('\n').map((line, index) => (
-                <div key={index} className="visual-line">{line}</div>
+              {puzzles[currentPuzzle].visual.split("\n").map((line, index) => (
+                <div key={index} className="visual-line">
+                  {line}
+                </div>
               ))}
             </div>
 
             <div className="answer-container">
-              <label htmlFor="answer-input" className="sr-only">Your answer</label>
+              <label htmlFor="answer-input" className="sr-only">
+                Your answer
+              </label>
               <input
                 id="answer-input"
                 type="text"
@@ -285,15 +301,22 @@ function App() {
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="Type your answer here"
                 disabled={isCorrect}
-                className={isCorrect ? 'correct-answer' : ''}
+                className={isCorrect ? "correct-answer" : ""}
                 aria-describedby="answer-instructions"
                 autoComplete="off"
-                onKeyPress={(e) => e.key === 'Enter' && userAnswer.trim() !== '' && !isCorrect && checkAnswer()}
+                onKeyPress={(e) =>
+                  e.key === "Enter" &&
+                  userAnswer.trim() !== "" &&
+                  !isCorrect &&
+                  checkAnswer()
+                }
               />
-              <span id="answer-instructions" className="sr-only">Type your solution to the rebus puzzle</span>
-              <button 
-                onClick={checkAnswer} 
-                disabled={isCorrect || userAnswer.trim() === ''}
+              <span id="answer-instructions" className="sr-only">
+                Type your solution to the rebus puzzle
+              </span>
+              <button
+                onClick={checkAnswer}
+                disabled={isCorrect || userAnswer.trim() === ""}
                 aria-label="Submit your answer"
               >
                 Submit
@@ -307,7 +330,9 @@ function App() {
                 </button>
               ) : (
                 <div className="hint-text">
-                  <p><strong>Hint:</strong> {puzzles[currentPuzzle].hint}</p>
+                  <p>
+                    <strong>Hint:</strong> {puzzles[currentPuzzle].hint}
+                  </p>
                 </div>
               )}
             </div>
@@ -320,11 +345,15 @@ function App() {
           </div>
 
           <div className="progress">
-            <p>Puzzle {currentPuzzle + 1} of {puzzles.length}</p>
+            <p>
+              Puzzle {currentPuzzle + 1} of {puzzles.length}
+            </p>
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${((currentPuzzle + 1) / puzzles.length) * 100}%` }}
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${((currentPuzzle + 1) / puzzles.length) * 100}%`,
+                }}
               ></div>
             </div>
           </div>
@@ -334,4 +363,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
